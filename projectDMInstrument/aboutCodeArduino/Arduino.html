@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en,el">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino</title>
+</head>
+<style>
+  body {
+    background-color: rgb(114, 115, 115);
+  }
+
+  pre {
+            font-size: 0.7rem;
+            margin: 0;
+        }
+  </style>
+  
+<pre><code>
+  <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><span class="copy-to-clipboard" title="Copy to clipboard"><span class="fa fa-clipboard" aria-hidden="true"></span></span><code class="language-js" data-lang="js"><span style="color:#960050;background-color:#1e0010">/Arduino Code.</span>
+    #include <CapacitiveSensor.h>
+
+        CapacitiveSensor cs_3_2 = CapacitiveSensor(3,2);                // ορισμός (καναλιων) στην πλακετα με κοινη εισοδο την '3'
+        CapacitiveSensor cs_3_4 = CapacitiveSensor(3,4);
+        CapacitiveSensor cs_3_6 = CapacitiveSensor(3,6);
+        CapacitiveSensor cs_3_8 = CapacitiveSensor(3,8);
+        CapacitiveSensor cs_3_9 = CapacitiveSensor(3,9);
+        CapacitiveSensor cs_3_11 = CapacitiveSensor(3,11);
+        int thresh1 = 1000;                                             // οριο για τα capacite sensors 1-5 που οριζετε με βαση την αντισταση και την επιφανια του elektric paint
+        int thresh2 = 1500;                                             // οριο για τα capacite sensors 6 που οριζετε με βαση την αντισταση και την επιφανια του elektric paint  
+        
+        int ONmid0 = 0x90;                                              // ονοματολογια για ανοιχτο καναλι σε 16δικο οριθμο
+        int ONmid1 = 0x91;
+        int ONmid2 = 0x92;
+        int ONmid3 = 0x93;
+        int ONmid4 = 0x94;
+        int ONmid5 = 0x95;
+        
+        int OFFmid0 = 0x80;                                             // ονοματολογια για κλειστο καναλι σε 16δικο οριθμο
+        int OFFmid1 = 0x81;
+        int OFFmid2 = 0x82;
+        int OFFmid3 = 0x83;
+        int OFFmid4 = 0x84;
+        int OFFmid5 = 0x85;
+        
+        int noteA;                                                     // νοτες
+        int noteB;
+        int noteC;
+        int noteD;
+        int noteE;
+        int noteF;
+        
+        int A = 0, B = 0, C = 0, D = 0, E = 0, F = 0;                 // Midi status 
+        
+        int chanMidOn = ONmid0;                                       //ονοματολογια μεταβλητων
+        int chanMidOff = OFFmid0;                                     //ονοματολογια μεταβλητων
+        
+        int T1 = LOW;
+        int T2 = LOW;
+        int T3 = LOW;
+        int T4 = LOW;
+        int T5 = LOW;
+        int T6 = LOW;
+        
+        int note36 = 0x37;                                            // νοτεσ για το mid5 που παιζει σε συνδιασμο του πεμπτου και του εκτου καναλιου
+        int note35 = 0x35;
+        int note34 = 0x34;
+        int note33 = 0x32;
+        int note32 = 0x30;
+        int note31 = 0x2F;
+        
+        
+        int note30 = 0x37;                                            // νοτεσ για το mid4 που παιζει σε συνδιασμο του τεταρτου και του εκτου καναλιου
+        int note29 = 0x35;
+        int note28 = 0x34;
+        int note27 = 0x32;
+        int note26 = 0x30;
+        int note25 = 0x2F;
+        
+        int note24 = 0x37;                                            // νοτεσ για το mid3 που παιζει σε συνδιασμο του τριτου και του εκτου καναλιου
+        int note23 = 0x35;
+        int note22 = 0x34;
+        int note21 = 0x32;
+        int note20 = 0x30;
+        int note19 = 0x2F;
+        
+        int note18 = 0x37;                                            // νοτεσ για το mid2 που παιζει σε συνδιασμο του δευτερου και του εκτου καναλιου
+        int note17 = 0x35;
+        int note16 = 0x34;
+        int note15 = 0x32;
+        int note14 = 0x30;
+        int note13 = 0x2F;
+        
+        int note12 = 0x37;                                            // νοτεσ για το mid1 που παιζει σε συνδιασμο του πρωτου και του εκτου καναλιου
+        int note10 = 0x34;
+        int note9 = 0x32;
+        int note8 = 0x30;
+        int note7 = 0x2F;
+        
+        int note6 = 0x37;                                             // νοτες για το mid0 χωρις κανεναν συνδιασμο
+        int note5 = 0x35;
+        int note4 = 0x34;
+        int note3 = 0x32;
+        int note2 = 0x30;
+        int note1 = 0x2F;
+        
+        int a , b , c , d , e , f = 0 ;
+        
+        long sensorValue1;
+        long sensorValue2;
+        long sensorValue3;
+        long sensorValue4;
+        long sensorValue5;
+        long sensorValue6;
+        
+        
+        
+        long debounce = 200;                                          //ορισμος χρονου
+        
+        long time = 0; 
+        
+        void setup() {
+        //cs_4_2.set_CS_AutocaL_Millis(0xFFFFFFFF);
+        Serial.begin(9600);                                         //ρυθμος μεταδωσης - χρονισμος arduino στα 9600Hz  με το προγραμματου και στο Hairless MIDI-seiral
+        pinMode(12, OUTPUT);                                        //led για mid1
+        pinMode(13, OUTPUT);                                        //led για mid2
+        pinMode(5, OUTPUT);                                         //led για mid3
+        pinMode(7, OUTPUT);                                         //led για mid4  
+        pinMode(10, OUTPUT);                                        //led για mid5
+        
+        
+        
+        
+        
+        }
+        void noteOn(int cmd, int pitch, int velocity)               //ορισμος μεταβλητων για να ενεργοποιειτε η νοτα
+        {  Serial.write(cmd);
+          Serial.write(pitch);
+          Serial.write(velocity);
+        
+        }
+        
+        void noteOff(int cmd, int pitch, int velocity)              //ορισμος μεταβλητων για να απενεργοποιειτε η νοτα
+        {
+          Serial.write(cmd);
+          Serial.write(pitch);
+          Serial.write(velocity);
+        
+        }
+        void SN()     // Function to play the notes
+        {
+        sensorValue6 = cs_3_2.capacitiveSensor(5);                  //δρομολογιση καναλιων στην πλακετα  
+        sensorValue1 = cs_3_4.capacitiveSensor(5);
+        sensorValue2 = cs_3_6.capacitiveSensor(5);
+        sensorValue3 = cs_3_8.capacitiveSensor(5);
+        sensorValue4 = cs_3_9.capacitiveSensor(5);
+        sensorValue5 = cs_3_11.capacitiveSensor(5);
+        
+        }
+        void loop() {
+          
+        SN();
+        //-----------------------------------------Mid0--------------------------------------------------------------------------------------
+        
+        //Δεν οριζουμε Mid0 για τον απλουστατο λογο οτι δεν χρειαζετε καποια διπλη λειτουργια για να ενργοποιηθει 
+        
+        //-----------------------------------------Mid1--------------------------------------------------------------------------------
+        if ( sensorValue6 >= thresh2 && sensorValue1 >= thresh1 && millis() - time >= debounce  ) {    //αν ισχυη η παραπανω πραξη τοτε
+            if(T1==HIGH)                                                                               //Τ1 πρεπει να ειναι ανοιχτο
+              T1=LOW;                                                                                  //και το Τ1 κλειστο
+              else                                                                                     //Τ1 αλλιως
+              T1=HIGH;                                                                                 //Τ1 ανοιχτο
+              time = millis();                                                                         //τοτε time=millis=0
+        }                                                                                              //δικλειδα                                                       
+        if(T1 == HIGH){                                                                                //εαν το Τ1 ειναι ανοιχτο
+          if(B+C+D+E+F == 0){                                                                          //και εαν B+C+D+E+F πρεπει να ισουτε με 0
+            if(A==0){                                                                                  //και εαν Α απετειτε να ειναι 0
+           chanMidOn = ONmid1;                                                                         //ανοιξε/κλεισε το midi
+           chanMidOff = OFFmid1;
+           digitalWrite(12, HIGH);                                                                     //Led μια mid1 ανοιχτο
+          }
+           A=1;                                                                                        //τοτε Α=1 (καναλι ανοιχτο)
+         }
+        } 
+        else if(T1 == LOW){                                                                             //αλλιως Τ1 ειναι λειστο
+          if(A>=1){                                                                                     //και εαν Α>=1
+            if(++A == 3){                                                                               //και εαν Α+Α+Α=3
+             chanMidOn = ONmid0;                                                                        //ανοιξε/κλεισε το midi
+             chanMidOff = OFFmid0;
+             digitalWrite(12, LOW);                                                                     //Led μια mid1 κλειστο
+             A=0;                                                                                       //τοτε Α=1 (καναλι κλειστο)
+               }
+             }
+           }
+        //-----------------------------------------Mid2--------------------------------------------------------------------------------
+        if ( sensorValue6 >= thresh2 && sensorValue2 >= thresh1 && millis() - time >= debounce  ) {    
+            if(T2==HIGH)
+              T2=LOW;
+              else
+              T2=HIGH;   
+              time = millis();  
+        }                                                           
+        if(T2 == HIGH){
+          if(A+C+D+E+F == 0){
+            if(B==0){
+           chanMidOn = ONmid2;
+           chanMidOff = OFFmid2;
+           digitalWrite(12, HIGH);
+           digitalWrite(13, HIGH);
+          }
+           B=1;
+         }
+        } 
+        else if(T2 == LOW){
+          if(B>=1){
+            if(++B == 3){
+             chanMidOn = ONmid0;
+             chanMidOff = OFFmid0;
+             digitalWrite(12, LOW);
+             digitalWrite(13, LOW);
+             B=0;
+               }
+             }
+           }
+        
+        //-----------------------------------------Mid3--------------------------------------------------------------------------------
+        if ( sensorValue6 >= thresh2 && sensorValue3 >= thresh1 && millis() - time >= debounce ) {    
+            if(T3==HIGH)
+              T3=LOW;
+              else
+              T3=HIGH;   
+              time = millis();  
+        }                                                           
+        if(T3 == HIGH){
+          if(A+B+D+E+F == 0){
+            if(C==0){
+           chanMidOn = ONmid3;
+           chanMidOff = OFFmid3;
+           digitalWrite(13, HIGH);
+           digitalWrite(12, HIGH);
+           digitalWrite(5, HIGH);
+          }
+           C=1;
+         }
+        } 
+        else if(T3 == LOW){
+          if(C>=1){
+            if(++C == 3){
+             chanMidOn = ONmid0;
+             chanMidOff = OFFmid0;
+             digitalWrite(13, LOW);
+             digitalWrite(12, LOW);
+             digitalWrite(5, LOW);
+             C=0;
+               }
+             }
+           }
+        
+        
+        
+        
+        //-----------------------------------------Mid4--------------------------------------------------------------------------------
+        if ( sensorValue6 >= thresh2 && sensorValue4 >= thresh1 && millis() - time >= debounce  ) {    
+            if(T4==HIGH)
+              T4=LOW;
+              else
+              T4=HIGH;   
+              time = millis();  
+        }                                                           
+        if(T4 == HIGH){
+          if(A+B+C+E+F == 0){
+            if(D==0){
+           chanMidOn = ONmid4;
+           chanMidOff = OFFmid4;
+           digitalWrite(13, HIGH);
+           digitalWrite(12, HIGH);
+           digitalWrite(5, HIGH);
+           digitalWrite(7, HIGH);
+          }
+           D=1;
+         }
+        } 
+        else if(T4 == LOW){
+          if(D>=1){
+            if(++D == 3){
+             chanMidOn = ONmid0;
+             chanMidOff = OFFmid0;
+             digitalWrite(13, LOW);
+             digitalWrite(12, LOW);
+             digitalWrite(5, LOW);
+             digitalWrite(7, LOW);
+             D=0;
+               }
+             }
+           }
+        
+        //-----------------------------------------Mid5--------------------------------------------------------------------------------
+        if ( sensorValue6 >= thresh2 && sensorValue5 >= thresh1 && millis() - time >= debounce  ) {     
+            if(T5==HIGH)
+              T5=LOW;
+              else
+              T5=HIGH;   
+              time = millis();  
+        }                                                           
+        if(T5 == HIGH){
+          if(A+B+C+D+F == 0){
+            if(E==0){
+           chanMidOn = ONmid5;
+           chanMidOff = OFFmid5;
+           digitalWrite(13, HIGH);
+           digitalWrite(12, HIGH);
+           digitalWrite(5, HIGH);
+           digitalWrite(7, HIGH);
+           digitalWrite(10, HIGH);
+          }
+           E=1;
+         }
+        } 
+        else if(T5 == LOW){
+          if(E>=1){
+            if(++E == 3){
+             chanMidOn = ONmid0;
+             chanMidOff = OFFmid0;
+             digitalWrite(13, LOW);
+             digitalWrite(12, LOW);
+             digitalWrite(5, LOW);
+             digitalWrite(7, LOW);
+             digitalWrite(10, LOW);
+             E=0;
+               }
+             }
+           }
+        
+        //----------------------------------------------------σημειωση----------------------------------------------------------------
+        //Σε καθε καναλι MIDI ανοιγουν τα led αναλογικα. Δηλαδη για mid1, αναβει το πρωτο led. Για mid2 αναβουν 2led, και ουτο καθε εξης. 
+        //Οσο αναφορα το mid0 δεν αναβει κανενα led γιατι ειναι το πρωτο καναλι και το μοναδικο που ενεργοποιειτε χωρις συνδιασμο.
+        //---------------------------------------------------------------sensor1-----------------
+        if(sensorValue1 >= thresh1 && sensorValue6 <= thresh2){       // εαν το 1>= του θρες1 και το 6 <= του θρεσ2
+          if (a == 0){                                                //τοτε: εαν το α=0
+            //digitalWrite(13, HIGH);                                 //αναψε λεντ πλακετας
+            noteOn(chanMidOn, note1, 0x7F);                           //ενεργοποιηση τησ νοτασ με ορισμο τησ
+            }
+            a = 1;                                                    //συνεπωσ α=1 <=θρες1
+          }
+        
+        else if(sensorValue1 <= thresh1){                             // εκτος εαν  το 1 <= θρες1
+          if ( a >= 1){                                               // τοτε α<=1
+            if (++a == 3){                                            //και εαν ++α=3
+              //digitalWrite(13, LOW);                                //κλεισε λεντ πλακετας
+              noteOff(chanMidOff, note1, 0x00);                       //απενεργοποιησε την νοτα
+              a = 0;                                                  //συνεπβως α=0 (αρα κλειστη)
+            }
+          }
+        }
+        
+        
+        
+        
+        
+        //-----------------------------------------------------------------sensor2-----------------
+        if(sensorValue2 >= thresh1 && sensorValue6 <= thresh2){
+          if (b == 0){
+            //digitalWrite(13, HIGH);
+            noteOn(chanMidOn, note2, 0x7F); 
+            }
+            b = 1;
+          }
+        
+        else if(sensorValue2 <= thresh1){
+          if ( b >= 1){
+            if (++b == 3){
+              //digitalWrite(13, LOW);
+              noteOff(chanMidOff, note2, 0x00);
+              b = 0; 
+            }
+          }
+        }
+        
+        //------------------------------------------------------------------sensor3----------------
+        if(sensorValue3 >= thresh1 && sensorValue6 <= thresh2){
+          if (c == 0){
+            //digitalWrite(13, HIGH);
+            noteOn(chanMidOn, note3, 0x7F); 
+            }
+            c = 1;
+          }
+        
+        else if(sensorValue3 <= thresh1){
+          if ( c >= 1){
+            if (++c == 3){
+              //digitalWrite(13, LOW);
+              noteOff(chanMidOff, note3, 0x00);
+              c = 0; 
+            }
+          }
+        }
+        
+        //------------------------------------------------------------------sensor4-----------------
+        if(sensorValue5 >= thresh1 && sensorValue6 <= thresh2 + 15000){
+          if (e == 0){
+            digitalWrite(13, HIGH);
+            noteOn(chanMidOn, note5, 0x7F); 
+            }
+            e = 1;
+          }
+        
+        else if(sensorValue5 <= thresh1){
+          if ( e >= 1){
+            if (++e == 3){
+              digitalWrite(13, LOW);
+              noteOff(chanMidOff, note5, 0x00);
+              e = 0; 
+            }
+          }
+        }
+        
+        //------------------------------------------------------------------sensor5------------------
+        if(sensorValue5 >= thresh1 && sensorValue6 <= thresh2){
+          if (e == 0){
+            //digitalWrite(13, HIGH);
+            noteOn(chanMidOn, note5, 0x7F); 
+            }
+            e = 1;
+          }
+        
+        else if(sensorValue5 <= thresh1){
+          if ( e >= 1){
+            if (++e == 3){
+              //digitalWrite(13, LOW);
+              noteOff(chanMidOff, note5, 0x00);
+              e = 0; 
+            }
+          }
+        }
+        
+        
+        
+        
+        
+        
+        //----------------------------------Δοκιμες με serial print επιβεβαιωση σωστης λειτουργιας---------------------
+        //Serial.print("value1");
+        //Serial.println(sensorValue1);
+        //Serial.print("value2");
+        //Serial.println(sensorValue2);
+        //Serial.print("value3");
+        //Serial.println(sensorValue3);
+        //Serial.print("value4");
+        //Serial.println(sensorValue4);
+        //Serial.print("value5");
+        //Serial.println(sensorValue5);
+        //Serial.print("value6");
+        //Serial.println(sensorValue6);
+        //delay(1);
+        
+        
+        
+        
+        
+        }
+
+
+
+
+
+
+
+
+
+</code>
+</pre>

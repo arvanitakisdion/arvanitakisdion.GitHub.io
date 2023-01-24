@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en,el">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperCollider</title>
+</head>
+<style>
+    body {
+      background-color: rgb(114, 115, 115);
+    }
+
+
+    pre {
+            font-size: 0.7rem;
+            margin: 0;
+        }
+    </style>
+    
+    
+        <pre><code>
+        <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><span class="copy-to-clipboard" title="Copy to clipboard"><span class="fa fa-clipboard" aria-hidden="true"></span></span><code class="language-js" data-lang="js"><span style="color:#960050;background-color:#1e0010">/SuperCollider Code.</span>
+    //------------------------------egrasia tmdg-------------------------------------------
+
+
+    MIDIClient.init;                                    //αναζητηση για MIDI controllers
+    MIDIIn.connect(0);                                  //συνδεση με συγκεκριμένο MIDI input
+    
+    
+    s.boot;                                            //boot the server
+    
+    
+    
+    (
+    //---------------------------------chan0----------------------------------------------
+    MIDIdef.noteOn(\noteOnTest, {                     //ανοιξε την "νοτα" απο το synth με ονομα \noteOnTest
+        arg vel, nn, chan, src;                       //μεταβλητές
+        [vel, nn].postln;
+        ~notes[nn] = Synth.new(
+            \tone,
+            [
+                \freq, nn.midicps,
+                \amp, vel.linexp(1,127,0.01,0.3),
+                \gate, 1,
+            ]
+        );
+    },chan:0);                                        //ορισμος για καναλι 1
+    
+    MIDIdef.noteOff(\noteOffTest, {                   //κλεισε την "νοτα" απο το synth με ονομα \noteOnTest
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn].set(\gate, 0);
+        ~notes[nn] = nil;
+    },chan:0);                                        //ορισμος για καναλι 1
+    
+    
+    //---------------------------------chan1----------------------------------------------
+    
+    MIDIdef.noteOn(\noteOnTest1, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn] = Synth.new(
+            \tone1,
+            [
+                \freq, nn.midicps,
+                \amp, vel.linexp(1,127,0.01,0.3),
+                \gate, 1,
+            ]
+        );
+    },chan:1);
+    MIDIdef.noteOff(\noteOffTest1, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn].set(\gate, 0);
+        ~notes[nn] = nil;
+    },chan:1);
+    
+    //---------------------------------chan2----------------------------------------------
+    
+    MIDIdef.noteOn(\noteOnTest2, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn] = Synth.new(
+            \tone2,
+            [
+                \freq, nn.midicps,
+                \amp, vel.linexp(1,127,0.01,0.3),
+                \gate, 1,
+            ]
+        );
+    },chan:2);
+    MIDIdef.noteOff(\noteOffTest2, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn].set(\gate, 0);
+        ~notes[nn] = nil;
+    },chan:2);
+    
+    //---------------------------------chan3----------------------------------------------
+    
+    MIDIdef.noteOn(\noteOnTest3, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn] = Synth.new(
+            \tone3,
+            [
+                \freq, nn.midicps,
+                \amp, vel.linexp(1,127,0.01,0.3),
+                \gate, 1,
+            ]
+        );
+    },chan:3);
+    MIDIdef.noteOff(\noteOffTest3, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn].set(\gate, 0);
+        ~notes[nn] = nil;
+    },chan:3);
+    
+    //---------------------------------chan4----------------------------------------------
+    
+    MIDIdef.noteOn(\noteOnTest4, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn] = Synth.new(
+            \tone4,
+            [
+                \freq, nn.midicps,
+                \amp, vel.linexp(1,127,0.01,0.3),
+                \gate, 1,
+            ]
+        );
+    },chan:4);
+    MIDIdef.noteOff(\noteOffTest4, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn].set(\gate, 0);
+        ~notes[nn] = nil;
+    },chan:4);
+    
+    //---------------------------------chan5----------------------------------------------
+    
+    MIDIdef.noteOn(\noteOnTest5, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn] = Synth.new(
+            \tone5,
+            [
+                \freq, nn.midicps,
+                \amp, vel.linexp(1,127,0.01,0.3),
+                \gate, 1,
+            ]
+        );
+    },chan:5);
+    MIDIdef.noteOff(\noteOffTest5, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn].set(\gate, 0);
+        ~notes[nn] = nil;
+    },chan:5);
+    
+    //---------------------------------chan6----------------------------------------------
+    
+    MIDIdef.noteOn(\noteOnTest6, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn] = Synth.new(
+            \tone6,
+            [
+                \freq, nn.midicps,
+                \amp, vel.linexp(1,127,0.01,0.3),
+                \gate, 1,
+            ]
+        );
+    },chan:6);
+    MIDIdef.noteOff(\noteOffTest6, {
+        arg vel, nn, chan, src;
+        [vel, nn].postln;
+        ~notes[nn].set(\gate, 0);
+        ~notes[nn] = nil;
+    },chan:6);
+    
+    )
+    
+    
+    //--------------------------------SoundChan0--------------------------------------
+    
+    
+    (
+    SynthDef.new(\tone, {                              //
+        arg freq = 440, amp = 0.3, gate = 0;
+        var sig, env;
+        sig = LFTri.ar(freq) !2;
+        env = EnvGen.kr(Env.adsr, gate, doneAction:2); //
+        sig = sig * env * amp;
+        Out.ar(0, sig);
+    }).add;                                            //
+    )
+    
+    //--------------------------------SoundChan1--------------------------------------
+    
+    
+    (
+    SynthDef.new(\tone1, {
+        arg freq1 = 220, amp = 0.8, gate = 0;
+        var sig, env;
+        sig = Saw.ar(freq1) !2;
+        env = EnvGen.kr(Env.adsr, gate, doneAction:2);
+        sig = sig * env * amp;
+        Out.ar(0, sig);
+    }).add;
+    )
+    
+    //--------------------------------SoundChan2--------------------------------------
+    
+    
+    (
+    SynthDef.new(\tone2, {
+        arg freq2 = 990, amp = 0.8, gate = 0;
+        var sig, env;
+        sig = SinOsc.ar(freq2) !2;
+        env = EnvGen.kr(Env.adsr, gate, doneAction:2);
+        sig = sig * env * amp;
+        Out.ar(0, sig);
+    }).add;
+    )
+    
+    
+    //--------------------------------SoundChan3--------------------------------------
+    
+    
+    (
+    SynthDef.new(\tone3, {
+        arg amp = 0.8, gate = 0;
+        var sig, env;
+        sig = WhiteNoise.ar(0.2) !2;
+        env = EnvGen.kr(Env.adsr, gate, doneAction:2);
+        sig = sig * env * amp;
+        Out.ar(0, sig);
+    }).add;
+    )
+    
+    
+    
+    //--------------------------------SoundChan4--------------------------------------
+    
+    
+    (
+    SynthDef.new(\tone4, {
+        arg freq4 = 440, amp = 0.8, gate = 0;
+        var sig, env;
+        sig = Saw.ar(freq4) !2;
+        env = EnvGen.kr(Env.adsr, gate, doneAction:2);
+        sig = sig * env * amp;
+        Out.ar(0, sig);
+    }).add;
+    
+    
+    //--------------------------------SoundChan5--------------------------------------
+    
+    
+    (
+    SynthDef.new(\tone5, {
+        arg freq5 = 2000, amp = 0.8, gate = 0;
+        var sig, env;
+        sig = Blip.ar(freq5,0.5) !2;
+        env = EnvGen.kr(Env.adsr, gate, doneAction:2);
+        sig = sig * env * amp;
+        Out.ar(0, sig);
+    }).add;
+    )
+    
+    //--------------------------Array-------------------------------------------------
+    ~notes = Array.newClear(128);                       //
+</pre>
+</code></pre>
